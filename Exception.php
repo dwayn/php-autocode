@@ -1,3 +1,5 @@
 <?php
 namespace PHPAutocoder;
-class Exception extends \Exception {}
+class Exception extends \Exception
+{
+}
