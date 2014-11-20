@@ -6,31 +6,33 @@ namespace PHPAutocoder\Helpers\Objects;
  *
  * @author dwayn
  */
-class StateArray implements Iterator , ArrayAccess , Countable
+class StatefulArray implements \Iterator , \ArrayAccess , \Countable
 {
 	protected $_prev = array();
 	protected $_data = array();
 
 	// useful for controlling what rights the end user code has in modifying the array
-	// to disable use not operator, ie. StateArray::ALLOW_ALL & ~StateArray::ALLOW_APPEND to disable append abilities
+	// to disable use not operator, ie. StatefulArray::ALLOW_ALL & ~StatefulArray::ALLOW_APPEND to disable append abilities
+    // permissions can be combined by ORing or adding them together, eg: ALLOW_APPEND | ALLOW_WRITE  or  ALLOW_APPEND + ALLOW_WRITE
 	const ALLOW_NONE   = 0x00;	// turn off all access to the array (make it read only beyond the initial instantiation)
-	const ALLOW_APPEND = 0x01;	// allow adding of previously (from StateArray instantiation) unset values
+	const ALLOW_APPEND = 0x01;	// allow adding of previously (from StatefulArray instantiation) unset values
 	const ALLOW_UNSET  = 0x02;	// allow to unset keys that are set in the array
 	const ALLOW_WRITE  = 0x04;	// allow the fields in the array to be overwritten
 	const ALLOW_ALL    = 0xFF;	// allow full access - truly act like it is a plain array
 	
 	protected $_workingFlags;
 
-	public function __construct($array, $workingFlags = StateArray::ALLOW_ALL)
+	public function __construct($array, $workingFlags = StatefulArray::ALLOW_ALL)
 	{
-		$this->_data = $array;
+        foreach($array as $key => $value)
+            $this->_data[$key] = $value;
 		$this->_prev = array();
 		$this->_workingFlags = $workingFlags;
 	}
 
 	/**
 	 * clears the previous array effectively resetting the state of the 
-	 * StateArray so that the current state is now accepted as the original state
+	 * StatefulArray so that the current state is now accepted as the original state
 	 * used in cases where the current state of the StateAray is now the persistent 
 	 * version (after the data has been written to the database inside of a DAO)
 	 * 
@@ -107,13 +109,13 @@ class StateArray implements Iterator , ArrayAccess , Countable
 
 	public function offsetSet($offset, $value)
 	{
-		if(!($this->_workingFlags & StateArray::ALLOW_WRITE))
+		if(!($this->_workingFlags & StatefulArray::ALLOW_WRITE))
 		{
-			throw new StateArrayException("write is not allowed in this StateArray");
+			throw new StatefulArrayException("write is not allowed in this StatefulArray");
 		}
-		if(!isset($this->_data[$offset]) && !($this->_workingFlags & StateArray::ALLOW_APPEND))
+		if(!isset($this->_data[$offset]) && !($this->_workingFlags & StatefulArray::ALLOW_APPEND))
 		{
-			throw new StateArrayException("append is not allowed in this StateArray");
+			throw new StatefulArrayException("append is not allowed in this StatefulArray");
 		}
 		if(isset($this->_data[$offset]))
 		{
@@ -143,7 +145,7 @@ class StateArray implements Iterator , ArrayAccess , Countable
 
 	public function offsetUnset($offset)
 	{
-		if($this->_workingFlags & StateArray::ALLOW_UNSET)
+		if($this->_workingFlags & StatefulArray::ALLOW_UNSET)
 		{
 			if(isset($this->_data[$offset]))
 			{
@@ -156,7 +158,7 @@ class StateArray implements Iterator , ArrayAccess , Countable
 		}
 		else
 		{
-			throw new StateArrayException("unset not allowed on this StateArray");
+			throw new StatefulArrayException("unset not allowed on this StatefulArray");
 		}
 	}
 

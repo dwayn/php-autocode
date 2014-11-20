@@ -71,9 +71,9 @@ class absolute_dummy_class_ignore_me
 		while($row = $q->fetch(PDO::FETCH_ASSOC))
 		{
 			if(is_null($this->joins))
-				$data[] = new StateArray($row, StateArray::ALLOW_WRITE);
+				$data[] = new StatefulArray($row, StatefulArray::ALLOW_WRITE);
 			else
-				$data[] = new StateArray($row, StateArray::ALLOW_NONE);
+				$data[] = new StatefulArray($row, StatefulArray::ALLOW_NONE);
 
 		}
 

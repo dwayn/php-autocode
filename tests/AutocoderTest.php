@@ -70,9 +70,8 @@ class AutocoderTest extends PHPUnit_Framework_TestCase
 //        var_dump($main);
 
         $main->enableFileWrite();
-        $main->disableStdout(true);
-        $main->process();
-        $main->writeFile();
+        $main->disableStdout();
+        $main->render();
 
         $generatedContents = file_get_contents($outfilename);
         $expectedContents = file_get_contents(realpath(dirname(__FILE__)).'/build/AutoCoderTestClass.php');

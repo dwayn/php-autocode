@@ -7,7 +7,7 @@ namespace PHPAutocoder\Helpers\Objects;
  *
  * @author dwayn
  */
-class StatefulObject implements Iterator , ArrayAccess , Countable
+class StatefulObject implements \Iterator , \ArrayAccess , \Countable
 {
 	protected $_prev = array();
 	protected $_data = array();
@@ -180,8 +180,6 @@ class StatefulObject implements Iterator , ArrayAccess , Countable
 			throw new StatefulObjectException("unset not allowed on this StatefulObject");
 		}
 	}
-
-
 
 }
 

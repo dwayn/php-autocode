@@ -85,10 +85,10 @@ class __CLASS__NAME__ extends SimpleDao
 		if(!empty($data))
 		{
 			// if there is no joins involved then all the row contents to be changed
-			// otherwise lick down the StateArray because at this time updating is not 
+			// otherwise lick down the StatefulArray because at this time updating is not 
 			// allowed on joined tables 
 			// (due to high complexity to implement and possible issues that might arise with data integrity)
-            $rval = new StateArray($data, StateArray::ALLOW_NONE);
+            $rval = new StatefulArray($data, StatefulArray::ALLOW_NONE);
 		}
 		else
 		{
@@ -101,7 +101,7 @@ class __CLASS__NAME__ extends SimpleDao
 /*____FUNCTION____END____*/
 
 /*____FUNCTION____START____*/
-	public function update(StateArray $row)
+	public function update(StatefulArray $row)
 	{
 		$prev = $row->getPrev();
 		if(count($prev) == 0)
@@ -169,7 +169,7 @@ class __CLASS__NAME__ extends SimpleDao
 		}
 
 
-		//reset history on StateArray
+		//reset history on StatefulArray
 		$row->clearPrev();
 
 		return $row;
