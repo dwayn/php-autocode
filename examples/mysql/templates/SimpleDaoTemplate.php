@@ -52,7 +52,7 @@ class __CLASS__NAME__ extends SimpleDao
 /*____PROCESSOR____CUSTOMFUNCTIONS____END____*/
 
 
-
+/*____IF____:__HAS__PKEY__*/
 /*____FUNCTION____START____*/
 	// make note that for now the primary get function will only return 1 row even in the
 	// case of joining other tables that potentially could make multiple rows be returned
@@ -175,6 +175,7 @@ class __CLASS__NAME__ extends SimpleDao
 		return $row;
 	}
 /*____FUNCTION____END____*/
+/*____ENDIF____:__HAS__PKEY__*/
 
 /*____FUNCTION____START____*/
 	public function create($__CREATE__FUNCTION__ARGS__)
@@ -191,14 +192,20 @@ class __CLASS__NAME__ extends SimpleDao
 
 		__LAST__INSERT__ID__CODE__;
 
-		$rval = $this->get($__CREATE__FUNCTION__LOOKUP__ARGS__, true);
+        /*____IF____:__HAS__PKEY__*/
+        $rval = $this->get($__CREATE__FUNCTION__LOOKUP__ARGS__, true);
+        /*____ENDIF____:__HAS__PKEY__*/
+        /*____IF____:__NO__PKEY__*/
+        $rval = $success;
+        /*____ENDIF____:__NO__PKEY__*/
 
 		return $rval;
 	}
 /*____FUNCTION____END____*/
 
-	
+/*____IF____:__HAS__INDEXES__*/
 /*____SUBTEMPLATE____:__GET__BY__SUBTEMPLATES__*//*____REPEATABLE____:__GET__BY__SUBTEMPLATES__*/
+/*____ENDIF____:__HAS__INDEXES__*/
 }
 
 class __CLASS__NAME__Exception extends DaoException { }

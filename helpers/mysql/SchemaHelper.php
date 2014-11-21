@@ -285,23 +285,26 @@ class SchemaHelper
      */
     public function loadSchemaFromXml($filename)
     {
-        $schema = simplexml_load_file($filename);
-
-        if (isset($schema->ExtraJoinMappings, $schema->ExtraJoinMappings->ExtraJoinMapping))
+        if(file_exists($filename))
         {
-            foreach ($schema->ExtraJoinMappings->ExtraJoinMapping as $mp)
-            {
-                if (!isset($this->extraJoinData[strval($mp->SrcTable)]))
-                {
-                    $this->extraJoinData[strval($mp->SrcTable)] = array();
-                }
-                if (!isset($this->extraJoinData[strval($mp->DestTable)]))
-                {
-                    $this->extraJoinData[strval($mp->DestTable)] = array();
-                }
+            $schema = simplexml_load_file($filename);
 
-                $this->extraJoinData[strval($mp->SrcTable)][]  = array('column' => strval($mp->SrcColumn), 'dest_table' => strval($mp->DestTable), 'dest_col' => strval($mp->DestColumn));
-                $this->extraJoinData[strval($mp->DestTable)][] = array('column' => strval($mp->DestColumn), 'dest_table' => strval($mp->SrcTable), 'dest_col' => strval($mp->SrcColumn));
+            if (isset($schema->ExtraJoinMappings, $schema->ExtraJoinMappings->ExtraJoinMapping))
+            {
+                foreach ($schema->ExtraJoinMappings->ExtraJoinMapping as $mp)
+                {
+                    if (!isset($this->extraJoinData[strval($mp->SrcTable)]))
+                    {
+                        $this->extraJoinData[strval($mp->SrcTable)] = array();
+                    }
+                    if (!isset($this->extraJoinData[strval($mp->DestTable)]))
+                    {
+                        $this->extraJoinData[strval($mp->DestTable)] = array();
+                    }
+
+                    $this->extraJoinData[strval($mp->SrcTable)][]  = array('column' => strval($mp->SrcColumn), 'dest_table' => strval($mp->DestTable), 'dest_col' => strval($mp->DestColumn));
+                    $this->extraJoinData[strval($mp->DestTable)][] = array('column' => strval($mp->DestColumn), 'dest_table' => strval($mp->SrcTable), 'dest_col' => strval($mp->SrcColumn));
+                }
             }
         }
 

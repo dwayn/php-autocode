@@ -13,7 +13,7 @@ class TableHelper
 {
     protected $pdo;
     protected $createTable;
-    protected $indexes;
+    protected $indexes = array();
     protected $indexPermutations;
     protected $describeData;
     protected $tablename;
@@ -166,6 +166,8 @@ class TableHelper
 
     public function calculateIndexId($cols)
     {
+        if(empty($cols))
+            return 0;
         $rval = 0;
         foreach ($cols as $c)
         {

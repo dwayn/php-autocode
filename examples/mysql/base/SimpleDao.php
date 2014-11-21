@@ -23,7 +23,7 @@ abstract class SimpleDao
 	 * set the dao to output debugging text
 	 *
 	 * @param boolean $debug
-	 * @return CFDao 
+	 * @return SimpleDao
 	 */
 	public function withDebug($debug = true)
 	{
