@@ -23,7 +23,8 @@ class AutocoderTest extends PHPUnit_Framework_TestCase
         );
         $main->assign('__ARRAY__VAR__', $addArrays);
         $main->assign('__VAR__DEFS__', array(array('$__VAR__' => '$someVariable', '__VALUE__' => 'some string value')));
-
+        $main->assign('__DISPLAY__TRUE__', true);
+        $main->assign('__DISPLAY__FALSE__', false);
 
 
         $singleSubtemplate = new Autocoder();

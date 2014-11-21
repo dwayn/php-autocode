@@ -1,5 +1,7 @@
 <?php
 namespace PHPAutocoder\Helpers\Mysql;
+use SimpleXMLElement;
+use PDO;
 
 
 /**
@@ -78,7 +80,7 @@ class SchemaHelper
             // this catches the case where case sensitivity is being abused by having multiple
             //	tables with the same name but different case, ie: 2 tables named my_table & MY_TABLE
             if (isset($this->origTableNames[strtolower($tableName)]))
-                throw new Exception('Multiple tables with the same name: aborting');
+                throw new SchemaHelperException('Multiple tables with the same name: aborting');
             $this->origTableNames[strtolower($tableName)] = $tableName;
             $tableName                                    = strtolower($tableName);
             $this->tables[$tableName]                     = new TableHelper($this->db);
@@ -153,6 +155,7 @@ class SchemaHelper
 
     protected function buildJoinMap()
     {
+        $totalfound = 0;
         foreach ($this->tables as $tableName => $th)
         {
             echo "processing $tableName...";
@@ -459,7 +462,7 @@ class SchemaHelper
 
         $file = fopen($this->outputXmlFile, "w");
         if (!$file)
-            throw new SchemaHelperException("Unable to open $filename for writing");
+            throw new SchemaHelperException("Unable to open {$this->outputXmlFile} for writing");
 
         fwrite($file, $xml);
     }
@@ -475,7 +478,7 @@ class SchemaHelper
      */
     protected function buildXMLFromArray(&$data, $rootNodeName = null)
     {
-        if (is_null($rootNode))
+        if (is_null($rootNodeName))
         {
             $rootNodeName = 'Schema';
         }

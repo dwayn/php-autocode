@@ -122,6 +122,23 @@ class AutoCoderTestClass
         return $returnVal;
     }
 
+
+    function shouldExist1()
+    {
+
+    }
+
+    function shouldExist2()
+    {
+
+    }
+
+    function shouldExist3()
+    {
+
+    }
+
+
 }
 
 

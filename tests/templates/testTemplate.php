@@ -14,8 +14,8 @@
  *      __VALUE__
  * __SINGLE__SUBTEMPLATE__  single subtemplate, should be an instance of autocoder configured with the subtemplate
  * __ARRAY__SUBTEMPLATE__   array of subtemplates, an array of autocoder instances, each configured for their subtemplates
- *
- *
+ * __DISPLAY__TRUE__        variable that is used in a conditional block
+ * __DISPLAY__FALSE__       variable that is used in a conditional block
  */
 
 
@@ -71,6 +71,40 @@ class __CLASS__NAME__
 /*____SUBTEMPLATE____:__SINGLE__SUBTEMPLATE__*/
 
 /*____SUBTEMPLATE____:__ARRAY__SUBTEMPLATE__*//*____REPEATABLE____:__ARRAY__SUBTEMPLATES__*/
+
+/*____IF____:__DISPLAY__TRUE__*/
+    function shouldExist1()
+    {
+
+    }
+
+/*____ENDIF____:__DISPLAY__TRUE__*/
+/*____IF____:__DISPLAY__FALSE__*/
+    function shouldNotExist1()
+    {
+
+    }
+
+/*____ENDIF____:__DISPLAY__FALSE__*/
+/*____IF____:__DISPLAY__TRUE__*/
+    function shouldExist2()
+    {
+
+    }
+
+/*____IF____:__DISPLAY__FALSE__*/
+    function shouldNotExist2()
+    {
+
+    }
+/*____ENDIF____:__DISPLAY__FALSE__*/
+    function shouldExist3()
+    {
+
+    }
+/*____ENDIF____:__DISPLAY__TRUE__*/
+
+
 }
 
 

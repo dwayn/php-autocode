@@ -8,14 +8,16 @@ namespace PHPAutocoder;
  */
 class Autocoder
 {
-    const PROCESSOR_COMMENT_START = 1;
-    const PROCESSOR_COMMENT_END   = 2;
-    const REPEATABLE_LINE         = 4;
-    const SUBTEMPLATE             = 8;
-    const CUSTOM_FUNCTIONS_START  = 16;
-    const CUSTOM_FUNCTIONS_END    = 32;
-    const FUNCTION_START          = 64;
-    const FUNCTION_END            = 128;
+    const PROCESSOR_COMMENT_START = 0x0001;
+    const PROCESSOR_COMMENT_END   = 0x0002;
+    const REPEATABLE_LINE         = 0x0004;
+    const SUBTEMPLATE             = 0x0008;
+    const CUSTOM_FUNCTIONS_START  = 0x0010;
+    const CUSTOM_FUNCTIONS_END    = 0x0020;
+    const FUNCTION_START          = 0x0040;
+    const FUNCTION_END            = 0x0080;
+    const IF_START                = 0x0100;
+    const IF_END                  = 0x0200;
 
     protected $definedFunctions;
     protected $templateName;
@@ -285,6 +287,15 @@ class Autocoder
         {
             return $this->readComment();
         }
+        elseif ($tag & self::IF_START)
+        {
+            return $this->processConditional($tag, $line);
+        }
+        elseif ($tag & self::IF_END)
+        {
+//            $this->ifStackCounter--;
+            return array();
+        }
         elseif ($tag & self::CUSTOM_FUNCTIONS_START)
         {
             $rval = array($line);
@@ -336,6 +347,40 @@ class Autocoder
         }
     }
 
+
+    /**
+     * Determines if a block of code encapsulated in IF...ENDIF should be skipped, if so then it proceeds to consume the lines from the template such that they will not be output
+     *
+     * @param integer $tag  - one or combination of multiple PROCESSOR_* constants representing the tag(s) for given line
+     * @param string  $line - line of text from the template
+     */
+    protected function processConditional($tag, $line)
+    {
+        $conditional = $this->parseMetaTag(self::IF_START, $line);
+        if(!isset($this->replacements[$conditional]))
+            throw new Exception("Expecting value for $conditional to be assigned to the Autocoder:\n    Defined in {$this->templateName} on line {$this->currentTemplateLineNumber}");
+        if(!$this->replacements[$conditional])
+        {
+            $found = false;
+            while(!$found)
+            {
+                $line = $this->readline();
+                if($line === false)
+                    break;
+                $tag = $this->identifyTags($line);
+                if($tag & self::IF_END)
+                {
+                    $endcond = $this->parseMetaTag(self::IF_END, $line);
+                    if($endcond == $conditional)
+                        $found = true;
+                }
+            }
+        }
+
+        return array();
+    }
+
+
     /**
      * Parses the meta tag from repeatable and subtemplate tagged lines (the portion of the tag after the ':')
      *
@@ -350,6 +395,12 @@ class Autocoder
         $matchText = '';
         switch ($tag)
         {
+            case self::IF_START:
+                $matchText = 'IF';
+                break;
+            case self::IF_END:
+                $matchText = 'ENDIF';
+                break;
             case self::REPEATABLE_LINE:
                 $matchText = 'REPEATABLE';
                 break;
@@ -554,6 +605,14 @@ class Autocoder
         if (preg_match('/\/\*____FUNCTION____END____\*\//', $line, $matches))
         {
             $rval += self::FUNCTION_END;
+        }
+        if (preg_match('/\/\*____IF____:(.*?)\*\//', $line))
+        {
+            $rval += self::IF_START;
+        }
+        if (preg_match('/\/\*____ENDIF____:(.*?)\*\//', $line))
+        {
+            $rval += self::IF_END;
         }
 
         return $rval;

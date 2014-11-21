@@ -1,5 +1,6 @@
 <?php
 namespace PHPAutocoder\Helpers\Mysql;
+use PDO;
 
 
 /**
